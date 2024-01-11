@@ -1,0 +1,158 @@
+<html>
+	<head>
+		<title>B1042061、B1042081期末專</title>
+		<script src="miniDraw.js"></script>
+	</head>
+	<body>
+		<script>
+			map = new Array(12);
+			for (i=0; i<12; i++) {
+				map[i] = new Array(16);
+				for (j=0; j<16; j++) {
+					map[i][j] = 0;
+				}
+			}
+			
+			for (i=0; i<12; i+=2) {
+				for (j=0; j<16; j+=2) {
+					map[i][j] = 1;
+				}
+			}
+			map[3][5] = 2;
+			map[3][8] = 2;
+			/*
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+			map[3][5] = 2;
+*/
+			img_wall = [];
+			for (i=0; i<12; i++) {
+				for (j=0; j<16; j++) {
+					new Img("floor.jpg", j*50, i*50, 50, 50);
+
+					if (map[i][j]==1) {
+						new Img("images.jpg", j*50, i*50, 50, 50);
+					}
+					
+					if (map[i][j]==2) {
+						img_wall[ [i,j] ] = new Img("wall.jpg", j*50, i*50, 50, 50);
+					}
+				}
+			}
+
+
+			playerX = 3;
+			playerY = 5;
+
+			player = new Img("cartoon.jpg", playerX*50, playerY*50, 50, 50);
+
+			document.onkeydown = keyDown;
+
+			function keyDown(e) {
+				console.log(e.key);
+				if (e.key=='ArrowUp'&& playerY>0 && map[playerY-1][playerX]==0) {
+					playerY -= 1;
+					player.y = playerY*50;
+				}
+				if (e.key=='ArrowDown'&& playerY<11 && map[playerY+1][playerX]==0) {
+					playerY += 1;
+					player.y = playerY*50;
+				}
+				if (e.key=='ArrowRight'&& playerX<15 && map[playerY][playerX+1]==0) {
+					playerX += 1;
+					player.x = playerX*50;
+				}
+				if (e.key=='ArrowLeft'&& playerX>0 && map[playerY][playerX-1]==0) {
+					playerX -= 1;
+					player.x = playerX*50;
+				}
+				if (e.key=='Enter') {
+					bombX = playerX;
+					bombY = playerY;
+					bomb = new Img("bomb.jpg", bombX*50, bombY*50, 50, 50);
+					setTimeout(boom, 3000);
+				}
+			}
+			
+			function boom() {
+				fires = [];
+				for (i=bombX; i<=bombX+2; i++) {
+					if (map[bombY][i]==0) {
+						fires.push(new Img("fire.jpg", i*50, bombY*50, 50, 50));
+					}
+					if (map[bombY][i]==2) {
+						fires.push(new Img("fire.jpg", i*50, bombY*50, 50, 50));
+						map[bombY][i] = 0;
+						img_wall[ [bombY,i] ].delete();
+						delete img_wall[ [bombY,i] ];
+						break;
+					}
+					if (map[bombY][i]==1) {
+						break;
+					}
+				}
+				for (i=bombX-1; i>=bombX-2; i--) {
+					if (map[bombY][i]==0) {
+						fires.push(new Img("fire.jpg", i*50, bombY*50, 50, 50));
+					}
+					if (map[bombY][i]==2) {
+						fires.push(new Img("fire.jpg", i*50, bombY*50, 50, 50));
+						map[bombY][i] = 0;
+						img_wall[ [bombY,i] ].delete();
+						delete img_wall[ [bombY,i] ];
+						break;
+					}
+					if (map[bombY][i]==1) {
+						break;
+					}
+				}
+				for (i=bombY+1; i<=bombY+2; i++) {
+					if (map[i][bombX]==0) {
+						fires.push(new Img("fire.jpg", bombX*50, i*50, 50, 50));
+					}
+					if (map[i][bombX]==2) {
+						fires.push(new Img("fire.jpg", bombX*50, i*50, 50, 50));
+						map[i][bombX] = 0;
+						img_wall[ [i,bombX] ].delete();
+						delete img_wall[ [i,bombX] ];
+						break;
+					}
+					if (map[i][bombX]==1) {
+						break;
+					}
+				}
+				for (i=bombY-1; i>=bombY-2; i--) {
+					if (map[i][bombX]==0) {
+						fires.push(new Img("fire.jpg", bombX*50, i*50, 50, 50));
+					}
+					if (map[i][bombX]==2) {
+						fires.push(new Img("fire.jpg", bombX*50, i*50, 50, 50));
+						map[i][bombX] = 0;
+						img_wall[ [i,bombX] ].delete();
+						delete img_wall[ [i,bombX] ];
+						break;
+					}
+					if (map[i][bombX]==1) {
+						break;
+					}
+				}
+				setTimeout(clear, 500);
+			}
+			
+			function clear() {
+				for (i=0; i<fires.length; i++) {
+					fires[i].delete();
+				}
+				bomb.delete();
+			}
+		</script>
+	</body>
+</html>
